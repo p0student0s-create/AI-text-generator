@@ -1,5 +1,3 @@
-![logo](https://via.placeholder.com/1200x300.png?text=AI+Security+Documentation+Generator)
-
 # AI Security Documentation Generator
 
 > Прототип ИИ-помощника для автоматизированной генерации документации по информационной безопасности.
