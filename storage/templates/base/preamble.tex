@@ -1,0 +1,94 @@
+% === ОБЩИЕ НАСТРОЙКИ ДЛЯ ВСЕХ ШАБЛОНОВ ===
+
+\newcommand{\docTitle}{Документ}
+\newcommand{\docAuthor}{Организация}
+\newcommand{\docHeader}{Заголовок документа}
+\newcommand{\docObject}{}
+\newcommand{\docCategory}{}
+\newcommand{\docCity}{г. Омск}
+\newcommand{\docDate}{\today}
+\newcommand{\docOrganization}{Организация}
+\newcommand{\docType}{Документ}
+\newcommand{\docSubtitle}{}
+\newcommand{\docSubject}{Тема документа}
+\newcommand{\docKeywords}{}
+\newcommand{\docYear}{\the\year}
+
+% 2. Шрифты и языки (XeLaTeX)
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+
+\defaultfontfeatures{Ligatures=TeX, Script=Cyrillic, Path=C:/Windows/Fonts/}
+\setmainfont{times.ttf}[
+  UprightFont = *,
+  BoldFont = timesbd.ttf,
+  ItalicFont = timesi.ttf,
+  BoldItalicFont = timesbi.ttf
+]
+\setsansfont{arial.ttf}[
+  UprightFont = *,
+  BoldFont = arialbd.ttf,
+  ItalicFont = ariali.ttf,
+  BoldItalicFont = arialbi.ttf
+]
+\setmonofont{cour.ttf}[
+  UprightFont = *,
+  BoldFont = courbd.ttf,
+  ItalicFont = couri.ttf,
+  BoldItalicFont = courbi.ttf
+]
+
+% 3. Основные пакеты
+\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{multirow}
+
+% 4. Списки
+\usepackage{enumitem}
+\setlist[itemize]{label={---}, leftmargin=*, topsep=4pt, itemsep=2pt}
+\setlist[enumerate]{label={\arabic*.}, leftmargin=*, topsep=4pt, itemsep=2pt}
+
+% 5. Ссылки и PDF-метаданные (теперь \docTitle уже определён!)
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=false,
+    pdfborder={0 0 0},
+    unicode=true,
+    pdftitle={\docTitle},
+    pdfauthor={\docAuthor},
+    pdfsubject={\docSubject}
+}
+
+% 6. Совместимость с Pandoc
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% 7. Абзацы
+\setlength{\parindent}{1.25cm}
+\setlength{\parskip}{0pt}
+
+% 8. Команды для ссылок на нормативку
+\newcommand{\gost}[1]{ГОСТ\,#1}
+\newcommand{\fstek}[1]{ФСТЭК\,#1}
+\newcommand{\fz}[1]{ФЗ\,#1}
+
+% 9. Термины
+\newcommand{\term}[1]{\textbf{#1}}
+\newcommand{\abbr}[2]{#1 (#2)}
+
+% 10. Стиль для основной страницы
+\newcommand{\mainpagestyle}{%
+    \pagestyle{fancy}%
+    \fancyhf{}%
+    \fancyhead[C]{\small \docHeader}%
+    \fancyfoot[C]{\thepage}%
+    \renewcommand{\headrulewidth}{0.5pt}%
+    \renewcommand{\footrulewidth}{0pt}%
+}

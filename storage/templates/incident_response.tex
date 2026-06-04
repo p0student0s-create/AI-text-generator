@@ -1,0 +1,205 @@
+% === ШАБЛОН: РЕАГИРОВАНИЕ НА ИНЦИДЕНТЫ ===
+% ГОСТ Р 57580-2017, ФСТЭК
+\documentclass[14pt,a4paper]{extarticle}
+
+% Подключение базовых настроек
+\input{base/preamble.tex}
+\input{base/geometry.tex}
+\input{base/headers.tex}
+\input{base/titlepage.tex}
+
+% Переменные Pandoc
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(year)$\renewcommand{\docYear}{$year$}$endif$
+
+% Специфичные переменные
+\newcommand{\docType}{ПОЛИТИКА РЕАГИРОВАНИЯ НА ИНЦИДЕНТЫ}
+\newcommand{\docSubtitle}{информационной безопасности}
+\newcommand{\docSubject}{Инциденты ИБ}
+\newcommand{\docKeywords}{инциденты, реагирование, CERT}
+
+\begin{document}
+
+% Титульный лист
+\makeTitlePage
+
+% Оглавление
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% 1. Общие положения
+\section{Общие положения}
+\label{sec:general}
+
+$body$
+
+% 2. Классификация инцидентов
+\section{Классификация инцидентов}
+\label{sec:classification}
+
+$if(classification)$
+$classification$
+$else$
+\subsection{Категории инцидентов}
+\begin{enumerate}
+    \item \textbf{Инциденты конфиденциальности:}
+    \begin{itemize}
+        \item Утечка данных;
+        \item Несанкционированный доступ.
+    \end{itemize}
+    
+    \item \textbf{Инциденты целостности:}
+    \begin{itemize}
+        \item Модификация данных;
+        \item Компрометация систем.
+    \end{itemize}
+    
+    \item \textbf{Инциденты доступности:}
+    \begin{itemize}
+        \item Отказ служб;
+        \item DDoS-атаки.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Уровни критичности}
+\begin{table}[h]
+\centering
+\caption{Уровни инцидентов}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Уровень} & \textbf{Описание} & \textbf{Время реакции} \\
+\hline
+Критический & Остановка бизнеса & 15 минут \\
+Высокий & Серьезный ущерб & 1 час \\
+Средний & Ограниченный ущерб & 4 часа \\
+Низкий & Минимальный ущерб & 24 часа \\
+\hline
+\end{tabular}
+\end{table}
+$endif$
+
+% 3. Роли и ответственность
+\section{Роли и ответственность}
+\label{sec:roles}
+
+$if(roles)$
+$roles$
+$else$
+\subsection{Группа реагирования (CERT/CSIRT)}
+\begin{itemize}
+    \item \textbf{Руководитель группы} — координация реагирования;
+    \item \textbf{Аналитик} — расследование инцидента;
+    \item \textbf{Технический специалист} — устранение последствий;
+    \item \textbf{PR-менеджер} — коммуникации.
+\end{itemize}
+$endif$
+
+% 4. Процессы реагирования
+\section{Процессы реагирования}
+\label{sec:processes}
+
+$if(processes)$
+$processes$
+$else$
+\subsection{Этапы реагирования}
+\begin{enumerate}
+    \item \textbf{Обнаружение и регистрация}
+    \begin{itemize}
+        \item Фиксация инцидента;
+        \item Присвоение номера;
+        \item Начальная классификация.
+    \end{itemize}
+    
+    \item \textbf{Анализ и оценка}
+    \begin{itemize}
+        \item Определение масштаба;
+        \item Оценка ущерба;
+        \item Определение приоритета.
+    \end{itemize}
+    
+    \item \textbf{Сдерживание и ликвидация}
+    \begin{itemize}
+        \item Изоляция受影响系统;
+        \item Устранение угрозы;
+        \item Восстановление систем.
+    \end{itemize}
+    
+    \item \textbf{Восстановление}
+    \begin{itemize}
+        \item Возврат к нормальной работе;
+        \item Проверка безопасности;
+        \item Мониторинг.
+    \end{itemize}
+    
+    \item \textbf{Анализ и улучшения}
+    \begin{itemize}
+        \item Расследование причин;
+        \item Извлечение уроков;
+        \item Обновление процедур.
+    \end{itemize}
+\end{enumerate}
+$endif$
+
+% 5. Коммуникации
+\section{Коммуникации}
+\label{sec:communications}
+
+$if(communications)$
+$communications$
+$else$
+\subsection{Уведомление}
+\begin{itemize}
+    \item \textbf{Внутреннее:} руководство, сотрудники;
+    \item \textbf{Внешнее:} регуляторы, клиенты, партнеры;
+    \item \textbf{Обязательное:} Роскомнадзор (72 часа), ФСТЭК.
+\end{itemize}
+$endif$
+
+% 6. Документирование
+\section{Документирование}
+\label{sec:documentation}
+
+$if(documentation)$
+$documentation$
+$endif$
+
+% 7. Обучение и тренировки
+\section{Обучение и тренировки}
+\label{sec:training}
+
+$if(training)$
+$training$
+$else$
+Проводятся регулярно:
+\begin{itemize}
+    \item \textbf{Теоретическое обучение} — 1 раз в год;
+    \item \textbf{Практические учения} — 2 раза в год;
+    \item \textbf{Tabletop exercises} — ежеквартально.
+\end{itemize}
+$endif$
+
+% Приложения
+$if(applications)$
+\newpage
+\appendix
+\section*{Приложения}
+\addcontentsline{toc}{section}{Приложения}
+$applications$
+$endif$
+
+% Нормативные ссылки
+$if(standards)$
+\newpage
+\section*{Нормативные ссылки}
+\addcontentsline{toc}{section}{Нормативные ссылки}
+\begin{itemize}
+$for(standards)$\item $standards$$endfor$
+\end{itemize}
+$endif$
+
+\end{document}

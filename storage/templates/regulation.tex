@@ -1,0 +1,112 @@
+% === ШАБЛОН: РЕГЛАМЕНТ ===
+% ГОСТ Р 7.0.97-2016
+\documentclass[14pt,a4paper]{extarticle}
+
+% Подключение базовых настроек
+\input{base/preamble.tex}
+\input{base/geometry.tex}
+\input{base/headers.tex}
+\input{base/titlepage.tex}
+
+% Переменные Pandoc
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(year)$\renewcommand{\docYear}{$year$}$endif$
+
+% Специфичные для регламента переменные
+\newcommand{\docType}{РЕГЛАМЕНТ}
+\newcommand{\docSubject}{Регламентация процессов}
+\newcommand{\docKeywords}{регламент, процедуры, процессы}
+
+\begin{document}
+
+% Титульный лист
+\makeSimpleTitlePage
+
+% Оглавление
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% 1. Общие положения
+\section{Общие положения}
+\label{sec:general}
+
+$if(general_provisions)$
+$general_provisions$
+$else$
+Настоящий Регламент определяет порядок и процедуры \docTitle\ в организации \docOrganization.
+
+Документ разработан в соответствии с требованиями:
+\begin{itemize}
+    \item Федерального закона от 27.07.2006 №152-ФЗ «О персональных данных»;
+    \item ГОСТ Р 57580-2017 «Информационная безопасность организаций»;
+    \item Приказа ФСТЭК России №21 от 18.02.2013.
+\end{itemize}
+$endif$
+
+% 2. Область применения
+\section{Область применения}
+\label{sec:scope}
+
+$if(scope)$
+$scope$
+$endif$
+
+% 3. Термины и определения
+\section{Термины и определения}
+\label{sec:terms}
+
+$if(terms)$
+$terms$
+$endif$
+
+% 4. Процессы и процедуры
+\section{Процессы и процедуры}
+\label{sec:processes}
+
+$body$
+
+% 5. Ответственность
+\section{Ответственность}
+\label{sec:responsibility}
+
+$if(responsibility)$
+$responsibility$
+$else$
+Ответственность за соблюдение настоящего Регламента возлагается на всех сотрудников организации \docOrganization.
+
+Контроль за исполнением Регламента осуществляет руководитель службы информационной безопасности.
+$endif$
+
+% 6. Контроль и мониторинг
+\section{Контроль и мониторинг}
+\label{sec:control}
+
+$if(control)$
+$control$
+$endif$
+
+% Приложения
+$if(applications)$
+\newpage
+\appendix
+\section*{Приложения}
+\addcontentsline{toc}{section}{Приложения}
+$applications$
+$endif$
+
+% Нормативные ссылки
+$if(standards)$
+\newpage
+\section*{Нормативные ссылки}
+\addcontentsline{toc}{section}{Нормативные ссылки}
+\begin{itemize}
+$for(standards)$\item $standards$$endfor$
+\end{itemize}
+$endif$
+
+\end{document}

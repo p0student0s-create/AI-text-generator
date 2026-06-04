@@ -1,0 +1,114 @@
+% === ШАБЛОН: ИНСТРУКЦИЯ ===
+% ГОСТ Р 7.0.97-2016
+\documentclass[14pt,a4paper]{extarticle}
+
+% Подключение базовых настроек
+\input{base/preamble.tex}
+\input{base/geometry.tex}
+\input{base/headers.tex}
+\input{base/titlepage.tex}
+
+% Переменные Pandoc
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(year)$\renewcommand{\docYear}{$year$}$endif$
+
+% Специфичные для инструкции переменные
+\newcommand{\docType}{ИНСТРУКЦИЯ}
+\newcommand{\docSubject}{Инструкция пользователя}
+\newcommand{\docKeywords}{инструкция, руководство, порядок действий}
+
+\begin{document}
+
+% Титульный лист
+\makeSimpleTitlePage
+
+% Оглавление
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% 1. Назначение инструкции
+\section{Назначение инструкции}
+\label{sec:purpose}
+
+$if(purpose)$
+$purpose$
+$else$
+Настоящая инструкция определяет порядок действий при \docTitle\ в организации \docOrganization.
+$endif$
+
+% 2. Область применения
+\section{Область применения}
+\label{sec:scope}
+
+$if(scope)$
+$scope$
+$endif$
+
+% 3. Требования к персоналу
+\section{Требования к персоналу}
+\label{sec:requirements}
+
+$if(personnel_requirements)$
+$personnel_requirements$
+$else$
+К выполнению работ допускаются сотрудники, прошедшие:
+\begin{itemize}
+    \item инструктаж по информационной безопасности;
+    \item обучение по настоящей инструкции;
+    \item проверку знаний требований инструкции.
+\end{itemize}
+$endif$
+
+% 4. Порядок выполнения работ
+\section{Порядок выполнения работ}
+\label{sec:procedure}
+
+$body$
+
+% 5. Действия в нештатных ситуациях
+\section{Действия в нештатных ситуациях}
+\label{sec:emergency}
+
+$if(emergency_actions)$
+$emergency_actions$
+$else$
+При возникновении нештатных ситуаций необходимо:
+\begin{enumerate}
+    \item Немедленно прекратить выполнение работ;
+    \item Сохранить состояние системы;
+    \item Сообщить руководителю подразделения;
+    \item Зафиксировать инцидент в журнале.
+\end{enumerate}
+$endif$
+
+% 6. Завершение работ
+\section{Завершение работ}
+\label{sec:completion}
+
+$if(completion)$
+$completion$
+$else$
+По завершении работ необходимо:
+\begin{enumerate}
+    \item Завершить все активные сессии;
+    \item Сохранить результаты работы;
+    \item Закрыть приложения;
+    \item Заблокировать рабочую станцию.
+\end{enumerate}
+$endif$
+
+% Приложения
+$if(applications)$
+\newpage
+\appendix
+\section*{Приложения}
+\addcontentsline{toc}{section}{Приложения}
+$applications$
+$endif$
+
+\end{document}

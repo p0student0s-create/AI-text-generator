@@ -1,0 +1,107 @@
+% storage/templates/vkr_report.tex
+\documentclass[14pt, a4paper, oneside]{extreport}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[russian]{babel}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{titlesec}
+\usepackage{biblatex}
+\usepackage{csquotes}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{booktabs}
+
+% === ОПРЕДЕЛЕНИЕ ПЕРЕМЕННЫХ ДЛЯ ВКР (добавить в preamble.tex) ===
+\newcommand{\thefaculty}{}
+\newcommand{\thedepartment}{}
+\newcommand{\thespecialty}{}
+\newcommand{\thedegree}{}
+\newcommand{\thereviewer}{}
+\newcommand{\thesupervisor}{}
+\newcommand{\theyear}{}
+\newcommand{\bibresource}{}
+
+% === Обработчик переменных из Pandoc metadata ===
+\ifdefined\faculty\renewcommand{\thefaculty}{\faculty}\fi
+\ifdefined\department\renewcommand{\thedepartment}{\department}\fi
+\ifdefined\specialty\renewcommand{\thespecialty}{\specialty}\fi
+\ifdefined\degree\renewcommand{\thedegree}{\degree}\fi
+\ifdefined\reviewer\renewcommand{\thereviewer}{\reviewer}\fi
+\ifdefined\supervisor\renewcommand{\thesupervisor}{\supervisor}\fi
+\ifdefined\year\renewcommand{\theyear}{\year}\fi
+\ifdefined\bibliography\renewcommand{\bibresource}{\bibliography}\fi
+
+% Поля по ГОСТ 7.32-2017
+\geometry{left=30mm, right=10mm, top=20mm, bottom=20mm}
+
+% Интервал 1.5
+\onehalfspacing
+
+% Шрифт Times New Roman
+\usepackage{times}
+
+% Заголовки: полужирный, без точки в конце
+\titleformat{\chapter}[block]
+  {\normalfont\large\bfseries\centering}
+  {\thechapter}{1em}{}
+\titleformat{\section}
+  {\normalfont\bfseries}
+  {\thesection}{1em}{}
+\titleformat{\subsection}
+  {\normalfont\bfseries}
+  {\thesubsection}{1em}{}
+
+% Нумерация страниц: снизу по центру
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% Титульный лист СибАДИ
+\newcommand{\sibadiTitlePage}{
+  \thispagestyle{empty}
+  \begin{center}
+    {\small МИНИСТЕРСТВО НАУКИ И ВЫСШЕГО ОБРАЗОВАНИЯ РОССИЙСКОЙ ФЕДЕРАЦИИ\par}
+    {\small ФГБОУ ВО «Сибирский автомобильно-дорожный университет (СибАДИ)»\par}
+    \vspace{1.5cm}
+    
+    {\normalsize \thefaculty\par}
+    {\normalsize \thedepartment\par}
+    \vspace{2cm}
+    
+    {\large\bfseries \thetitle\par}
+    \vspace{0.5cm}
+    {\large Выпускная квалификационная работа\par}
+    \vspace{1cm}
+    
+    {\normalsize Направление подготовки: \thespecialty\par}
+    {\normalsize Квалификация: \thedegree\par}
+    \vspace{2cm}
+    
+    {\normalsize Выполнил: \theauthor\par}
+    
+    {\normalsize \thecity~\theyear\par}
+  \end{center}
+}
+
+% === ДОБАВИТЬ В ПРЕАМБУЛУ ДЛЯ БИБЛИОГРАФИИ ===
+\ifdefined\bibresource
+  \addbibresource{\bibresource}
+\fi
+
+\begin{document}
+\sibadiTitlePage
+\newpage
+\tableofcontents
+\newpage
+
+$body$
+
+\printbibliography[
+  title={Список использованных источников}, 
+  heading=bibintoc,
+  resetnumbers=true
+]
+\end{document}

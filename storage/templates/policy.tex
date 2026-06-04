@@ -1,0 +1,51 @@
+% storage\templates\policy.tex
+% === ШАБЛОН: ПОЛИТИКА ИНФОРМАЦИОННОЙ БЕЗОПАСНОСТИ ===
+% ГОСТ Р 7.0.97-2016, ФСТЭК России
+\documentclass[14pt,a4paper]{extarticle}
+
+% === 1. ПОДКЛЮЧЕНИЕ БАЗОВЫХ НАСТРОЕК (СТРОГО В ЭТОМ ПОРЯДКЕ) ===
+\input{base/preamble.tex}      % Шрифты, пакеты, переменные по умолчанию
+\input{base/geometry.tex}      % Поля ГОСТ
+\input{base/headers.tex}       % Колонтитулы
+\input{base/titlepage.tex}     % Титульный лист
+
+% === 2. СПЕЦИФИЧНЫЕ ПЕРЕМЕННЫЕ ДЛЯ ПОЛИТИКИ ИБ ===
+% Переопределяем через Pandoc-переменные
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(objectType)$\renewcommand{\docObject}{$objectType$}$endif$
+$if(dataCategory)$\renewcommand{\docCategory}{$dataCategory$}$endif$
+
+% Специфичные для политики значения по умолчанию
+\renewcommand{\docType}{ПОЛИТИКА ИНФОРМАЦИОННОЙ БЕЗОПАСНОСТИ}
+\renewcommand{\docSubtitle}{организации}
+\renewcommand{\docSubject}{Политика ИБ}
+\renewcommand{\docKeywords}{политика, информационная безопасность, защита информации}
+
+\begin{document}
+
+% === 3. ТИТУЛЬНЫЙ ЛИСТ ===
+\makeTitlePage
+
+% === 4. ОГЛАВЛЕНИЕ ===
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% === 5. ОСНОВНОЙ КОНТЕНТ (ДИНАМИЧЕСКИ ИЗ RAG/LLM) ===
+$body$
+
+% === 6. НОРМАТИВНЫЕ ССЫЛКИ (ЕСЛИ ЕСТЬ) ===
+$if(standards)$
+\newpage
+\section*{Нормативные ссылки}
+\addcontentsline{toc}{section}{Нормативные ссылки}
+\begin{itemize}
+$for(standards)$\item $standards$$endfor$
+\end{itemize}
+$endif$
+
+\end{document}

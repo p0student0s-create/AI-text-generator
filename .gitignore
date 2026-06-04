@@ -1,0 +1,25 @@
+# Виртуальное окружение
+.venv/
+venv/
+
+# Кэш Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Файлы с секретами
+.env
+.env.bak
+
+# Логи
+*.log
+logs/
+
+# IDE
+.vscode/
+.idea/
+
+# Временные файлы
+*.tmp
+*.bak

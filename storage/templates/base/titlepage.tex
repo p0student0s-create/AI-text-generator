@@ -1,0 +1,75 @@
+% === ТИТУЛЬНЫЙ ЛИСТ ===
+% Подключается после headers.tex
+
+% Основной титульный лист (для политик, моделей угроз, оценки рисков)
+\newcommand{\makeTitlePage}{%
+\begin{titlepage}
+\pagestyle{empty}
+\centering
+\vfill
+{\normalsize\bfseries \docOrganization\par}
+\vspace{2cm}
+{\Large\bfseries \docType\par}
+\vspace{0.5cm}
+{\Huge\bfseries \docTitle\par}
+\vspace{1cm}
+
+\ifx\docObject\empty\else
+{\normalsize Объект защиты: \docObject\par}
+\vspace{0.3cm}
+\fi
+
+\ifx\docCategory\empty\else
+{\normalsize Категория: \docCategory\par}
+\vspace{0.3cm}
+\fi
+
+\vfill
+\begin{flushright}
+\normalsize
+СОГЛАСОВАНО:\\
+Руководитель службы ИБ\\
+\vspace{1.5cm}
+\underline{\hspace{6cm}}\\
+\small «\underline{\hspace{1.5cm}}» \underline{\hspace{3cm}} 20\underline{\hspace{1cm}} г.
+\end{flushright}
+\vspace{2cm}
+{\normalsize \docCity, \docYear\par}
+\vspace{1cm}
+\vfill
+\end{titlepage}
+}
+
+% Упрощённый титульный лист (для инструкций, регламентов)
+\newcommand{\makeSimpleTitlePage}{%
+\begin{titlepage}
+\pagestyle{empty}
+\centering
+\vfill
+{\normalsize\bfseries \docOrganization\par}
+\vspace{2cm}
+{\Large\bfseries \docType\par}
+\vspace{0.5cm}
+{\Huge\bfseries \docTitle\par}
+\vspace{1cm}
+
+\ifx\docObject\empty\else
+{\normalsize Объект: \docObject\par}
+\vspace{0.3cm}
+\fi
+
+\vfill
+\begin{flushright}
+\normalsize
+УТВЕРЖДАЮ:\\
+Руководитель организации\\
+\vspace{1.5cm}
+\underline{\hspace{6cm}}\\
+\small «\underline{\hspace{1.5cm}}» \underline{\hspace{3cm}} 20\underline{\hspace{1cm}} г.
+\end{flushright}
+\vspace{2cm}
+{\normalsize \docCity, \docYear\par}
+\vspace{1cm}
+\vfill
+\end{titlepage}
+}

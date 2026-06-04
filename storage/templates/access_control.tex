@@ -1,0 +1,224 @@
+% === ШАБЛОН: УПРАВЛЕНИЕ ДОСТУПОМ ===
+% ГОСТ Р 57580-2017, ФСТЭК
+\documentclass[14pt,a4paper]{extarticle}
+
+% Подключение базовых настроек
+\input{base/preamble.tex}
+\input{base/geometry.tex}
+\input{base/headers.tex}
+\input{base/titlepage.tex}
+
+% Переменные Pandoc
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(year)$\renewcommand{\docYear}{$year$}$endif$
+
+% Специфичные переменные
+\newcommand{\docType}{ПОЛИТИКА УПРАВЛЕНИЯ ДОСТУПОМ}
+\newcommand{\docSubtitle}{и аутентификации}
+\newcommand{\docSubject}{IAM, доступ, аутентификация}
+\newcommand{\docKeywords}{доступ, аутентификация, авторизация, RBAC}
+
+\begin{document}
+
+% Титульный лист
+\makeTitlePage
+
+% Оглавление
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% 1. Общие положения
+\section{Общие положения}
+\label{sec:general}
+
+$body$
+
+% 2. Принципы управления доступом
+\section{Принципы управления доступом}
+\label{sec:principles}
+
+$if(principles)$
+$principles$
+$else$
+\subsection{Основные принципы}
+\begin{itemize}
+    \item \textbf{Минимальных привилегий} — доступ только по необходимости;
+    \item \textbf{Разделения обязанностей} — критичные операции требуют согласования;
+    \item \textbf{Непрерывности контроля} — постоянный мониторинг;
+    \item \textbf{Подотчетности} — все действия логируются.
+\end{itemize}
+$endif$
+
+% 3. Идентификация и аутентификация
+\section{Идентификация и аутентификация}
+\label{sec:authentication}
+
+$if(authentication)$
+$authentication$
+$else$
+\subsection{Требования к аутентификации}
+\begin{itemize}
+    \item \textbf{Парольная защита:}
+    \begin{itemize}
+        \item Минимальная длина — 12 символов;
+        \item Сложность — буквы, цифры, спецсимволы;
+        \item Срок действия — 90 дней.
+    \end{itemize}
+    
+    \item \textbf{Многофакторная аутентификация:}
+    \begin{itemize}
+        \item Обязательна для администраторов;
+        \item Рекомендуется для всех пользователей.
+    \end{itemize}
+\end{itemize}
+$endif$
+
+% 4. Авторизация и роли
+\section{Авторизация и управление ролями}
+\label{sec:authorization}
+
+$if(authorization)$
+$authorization$
+$else$
+\subsection{Ролевая модель (RBAC)}
+\begin{table}[h]
+\centering
+\caption{Стандартные роли}
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Роль} & \textbf{Права} \\
+\hline
+Пользователь & Чтение своих данных \\
+Специалист & Чтение/запись в своей области \\
+Администратор & Полные права в системе \\
+Аудитор & Только чтение логов \\
+\hline
+\end{tabular}
+\end{table}
+$endif$
+
+% 5. Управление учетными записями
+\section{Управление учетными записями}
+\label{sec:accounts}
+
+$if(accounts)$
+$accounts$
+$else$
+\subsection{Жизненный цикл учетной записи}
+\begin{enumerate}
+    \item \textbf{Создание:}
+    \begin{itemize}
+        \item По заявке руководителя;
+        \item С проверкой необходимости доступа.
+    \end{itemize}
+    
+    \item \textbf{Изменение:}
+    \begin{itemize}
+        \item При смене должности;
+        \item По запросу пользователя.
+    \end{itemize}
+    
+    \item \textbf{Блокировка:}
+    \begin{itemize}
+        \item После 3 неудачных попыток входа;
+        \item При увольнении сотрудника.
+    \end{itemize}
+    
+    \item \textbf{Удаление:}
+    \begin{itemize}
+        \item Через 90 дней после увольнения;
+        \item С архивированием данных.
+    \end{itemize}
+\end{enumerate}
+$endif$
+
+% 6. Привилегированный доступ
+\section{Привилегированный доступ}
+\label{sec:privileged}
+
+$if(privileged)$
+$privileged$
+$else$
+\subsection{Особые требования}
+\begin{itemize}
+    \item \textbf{Учетные записи администраторов:}
+    \begin{itemize}
+        \item Отдельные от обычных;
+        \item Обязательная MFA;
+        \item Сессионная запись.
+    \end{itemize}
+    
+    \item \textbf{Экстренный доступ:}
+    \begin{itemize}
+        \item Break-glass процедуры;
+        \item Уведомление в течение 1 часа;
+        \item Обязательный аудит.
+    \end{itemize}
+\end{itemize}
+$endif$
+
+% 7. Аудит и мониторинг
+\section{Аудит и мониторинг}
+\label{sec:audit}
+
+$if(audit)$
+$audit$
+$else$
+\subsection{Журналирование}
+Фиксируются все события:
+\begin{itemize}
+    \item Успешные и неудачные входы;
+    \item Изменение прав доступа;
+    \item Доступ к критичным данным;
+    \item Привилегированные операции.
+\end{itemize}
+
+\subsection{Периодичность проверок}
+\begin{itemize}
+    \item Ежедневный анализ логов;
+    \item Еженедельный обзор привилегий;
+    \item Ежемесячный аудит доступа.
+\end{itemize}
+$endif$
+
+% 8. Удаленный доступ
+\section{Удаленный доступ}
+\label{sec:remote}
+
+$if(remote)$
+$remote$
+$else$
+\subsection{Требования}
+\begin{itemize}
+    \item VPN с шифрованием;
+    \item Обязательная MFA;
+    \item Ограничение по IP;
+    \item Сессионный таймаут — 15 минут.
+\end{itemize}
+$endif$
+
+% Приложения
+$if(applications)$
+\newpage
+\appendix
+\section*{Приложения}
+\addcontentsline{toc}{section}{Приложения}
+$applications$
+$endif$
+
+% Нормативные ссылки
+$if(standards)$
+\newpage
+\section*{Нормативные ссылки}
+\addcontentsline{toc}{section}{Нормативные ссылки}
+\begin{itemize}
+$for(standards)$\item $standards$$endfor$
+\end{itemize}
+$endif$
+
+\end{document}

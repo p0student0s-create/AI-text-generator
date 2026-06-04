@@ -1,0 +1,58 @@
+﻿services:
+  # Графовая база данных для хранения связей сущностей ИБ
+  neo4j:
+    image: neo4j:5.20-community
+    container_name: ib_neo4j
+    ports:
+      - "7474:7474"  # Web UI
+      - "7687:7687"  # Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/IBsecure2026!
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD", "neo4j", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Векторная база данных для семантического поиска
+  milvus:
+    image: milvusdb/milvus:v2.4.12
+    container_name: ib_milvus
+    ports:
+      - "19530:19530"  # gRPC
+      - "9091:9091"    # HTTP
+    environment:
+      - ETCD_USE_EMBED=true
+      - ETCD_DATA_DIR=/var/lib/milvus/etcd
+      - COMMON_STORAGETYPE=local
+    volumes:
+      - milvus_data:/var/lib/milvus
+    command: ["milvus", "run", "standalone"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Redis для кэширования и хранения пар ключ-значение
+  redis:
+    image: redis:7-alpine
+    container_name: ib_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass IBredis2026!
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  neo4j_data:
+  milvus_data:
+  redis_data:

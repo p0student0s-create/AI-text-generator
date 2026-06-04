@@ -1,0 +1,199 @@
+% === ШАБЛОН: ОЦЕНКА РИСКОВ ===
+% ГОСТ Р 57580-2017, ISO 27005
+\documentclass[14pt,a4paper]{extarticle}
+
+% Подключение базовых настроек
+\input{base/preamble.tex}
+\input{base/geometry.tex}
+\input{base/headers.tex}
+\input{base/titlepage.tex}
+
+% Переменные Pandoc
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(year)$\renewcommand{\docYear}{$year$}$endif$
+
+% Специфичные переменные
+\newcommand{\docType}{ОЦЕНКА РИСКОВ}
+\newcommand{\docSubtitle}{информационной безопасности}
+\newcommand{\docSubject}{Анализ и оценка рисков}
+\newcommand{\docKeywords}{риски, оценка, обработка рисков}
+
+\begin{document}
+
+% Титульный лист
+\makeTitlePage
+
+% Оглавление
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% 1. Введение
+\section{Введение}
+\label{sec:intro}
+
+$body$
+
+% 2. Методология
+\section{Методология оценки рисков}
+\label{sec:methodology}
+
+$if(methodology)$
+$methodology$
+$else$
+Оценка рисков проводится в соответствии с:
+\begin{itemize}
+    \item ГОСТ Р 57580-2017;
+    \item ISO/IEC 27005:2018;
+    \item Методикой ФСТЭК России.
+\end{itemize}
+
+\subsection{Подход к оценке}
+Применяется комбинированный подход:
+\begin{itemize}
+    \item \textbf{Качественная оценка} — экспертный анализ;
+    \item \textbf{Количественная оценка} — расчет показателей.
+\end{itemize}
+$endif$
+
+% 3. Идентификация активов
+\section{Идентификация активов}
+\label{sec:assets}
+
+$if(assets)$
+$assets$
+$else$
+\subsection{Критические активы}
+\begin{table}[h]
+\centering
+\caption{Реестр активов}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Актив} & \textbf{Тип} & \textbf{Критичность} \\
+\hline
+База данных ПДн & Информация & Высокая \\
+Серверы & Оборудование & Высокая \\
+Сеть & Инфраструктура & Средняя \\
+\hline
+\end{tabular}
+\end{table}
+$endif$
+
+% 4. Идентификация угроз
+\section{Идентификация угроз}
+\label{sec:threats}
+
+$if(threats)$
+$threats$
+$endif$
+
+% 5. Идентификация уязвимостей
+\section{Идентификация уязвимостей}
+\label{sec:vulnerabilities}
+
+$if(vulnerabilities)$
+$vulnerabilities$
+$endif$
+
+% 6. Анализ рисков
+\section{Анализ рисков}
+\label{sec:analysis}
+
+$if(analysis)$
+$analysis$
+$else$
+\subsection{Матрица рисков}
+\begin{table}[h]
+\centering
+\caption{Оценка рисков}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Риск} & \textbf{Вероятность} & \textbf{Влияние} & \textbf{Уровень} \\
+\hline
+Утечка ПДн & Средняя & Высокое & Высокий \\
+DDoS-атака & Низкая & Среднее & Средний \\
+Отказ оборудования & Средняя & Высокое & Высокий \\
+\hline
+\end{tabular}
+\end{table}
+$endif$
+
+% 7. Оценка рисков
+\section{Оценка рисков}
+\label{sec:risk_evaluation}
+
+$if(risk_evaluation)$
+$risk_evaluation$
+$endif$
+
+% 8. Реестр рисков
+\section{Реестр рисков}
+\label{sec:risk_register}
+
+$if(risk_register)$
+$risk_register$
+$else$
+\begin{table}[h]
+\centering
+\caption{Реестр выявленных рисков}
+\begin{tabular}{|c|p{6cm}|c|c|}
+\hline
+\textbf{№} & \textbf{Описание риска} & \textbf{Уровень} & \textbf{Приоритет} \\
+\hline
+1 & Несанкционированный доступ к ПДн & Высокий & 1 \\
+2 & Потеря данных из-за сбоя & Высокий & 1 \\
+3 & Инсайдерская угроза & Средний & 2 \\
+\hline
+\end{tabular}
+\end{table}
+$endif$
+
+% 9. Обработка рисков
+\section{План обработки рисков}
+\label{sec:treatment}
+
+$if(treatment)$
+$treatment$
+$else$
+\subsection{Стратегии обработки}
+Для каждого риска выбирается одна из стратегий:
+\begin{itemize}
+    \item \textbf{Снижение} — внедрение мер защиты;
+    \item \textbf{Принятие} — осознанное принятие риска;
+    \item \textbf{Передача} — страхование, аутсорсинг;
+    \item \textbf{Избегание} — отказ от рискованной деятельности.
+\end{itemize}
+$endif$
+
+% 10. Меры защиты
+\section{Меры по снижению рисков}
+\label{sec:controls}
+
+$if(controls)$
+$controls$
+$endif$
+
+% Приложения
+$if(applications)$
+\newpage
+\appendix
+\section*{Приложения}
+\addcontentsline{toc}{section}{Приложения}
+$applications$
+$endif$
+
+% Нормативные ссылки
+$if(standards)$
+\newpage
+\section*{Нормативные ссылки}
+\addcontentsline{toc}{section}{Нормативные ссылки}
+\begin{itemize}
+$for(standards)$\item $standards$$endfor$
+\end{itemize}
+$endif$
+
+\end{document}

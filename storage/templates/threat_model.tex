@@ -1,0 +1,194 @@
+% === ШАБЛОН: МОДЕЛЬ УГРОЗ ===
+% ГОСТ Р 57580-2017, Руководящие документы ФСТЭК
+\documentclass[14pt,a4paper]{extarticle}
+
+% Подключение базовых настроек
+\input{base/preamble.tex}
+\input{base/geometry.tex}
+\input{base/headers.tex}
+\input{base/titlepage.tex}
+
+% Переменные Pandoc
+$if(title)$\renewcommand{\docTitle}{$title$}$endif$
+$if(author)$\renewcommand{\docAuthor}{$author$}$endif$
+$if(doc_header)$\renewcommand{\docHeader}{$doc_header$}$endif$
+$if(date)$\renewcommand{\docDate}{$date$}$endif$
+$if(city)$\renewcommand{\docCity}{$city$}$endif$
+$if(year)$\renewcommand{\docYear}{$year$}$endif$
+
+% Специфичные переменные
+\newcommand{\docType}{МОДЕЛЬ УГРОЗ}
+\newcommand{\docSubtitle}{информационной безопасности}
+\newcommand{\docSubject}{Моделирование угроз}
+\newcommand{\docKeywords}{угрозы, нарушители, анализ рисков}
+
+\begin{document}
+
+% Титульный лист
+\makeTitlePage
+
+% Оглавление
+\mainpagestyle
+\tableofcontents
+\newpage
+
+% 1. Общие положения
+\section{Общие положения}
+\label{sec:general}
+
+$body$
+
+% 2. Объект защиты
+\section{Объект защиты}
+\label{sec:object}
+
+$if(object_description)$
+$object_description$
+$else$
+Объектом защиты является информационная система персональных данных \docOrganization.
+
+Характеристики объекта:
+\begin{itemize}
+    \item Категория системы: \ifx\docCategory\undefined не определена\else \docCategory\fi;
+    \item Уровень защищенности: определяется в соответствии с ФСТЭК;
+    \item Объем обрабатываемых данных: \ifx\docVolume\undefined не указан\else \docVolume\fi.
+\end{itemize}
+$endif$
+
+% 3. Активы
+\section{Активы}
+\label{sec:assets}
+
+$if(assets)$
+$assets$
+$else$
+\subsection{Информационные активы}
+\begin{itemize}
+    \item Персональные данные субъектов;
+    \item Конфиденциальная информация организации;
+    \item Программное обеспечение;
+    \item Базы данных.
+\end{itemize}
+
+\subsection{Технические активы}
+\begin{itemize}
+    \item Серверное оборудование;
+    \item Сетевая инфраструктура;
+    \item Рабочие станции;
+    \item Системы хранения данных.
+\end{itemize}
+$endif$
+
+% 4. Нарушители
+\section{Характеристика нарушителей}
+\label{sec:violators}
+
+$if(violators)$
+$violators$
+$else$
+\subsection{Категории нарушителей}
+\begin{enumerate}
+    \item \textbf{Внешние нарушители:}
+    \begin{itemize}
+        \item Хакеры и организованные группы;
+        \item Конкуренты;
+        \item Киберпреступники.
+    \end{itemize}
+    
+    \item \textbf{Внутренние нарушители:}
+    \begin{itemize}
+        \item Недовольные сотрудники;
+        \item Персонал с избыточными правами;
+        \item Бывшие сотрудники.
+    \end{itemize}
+\end{enumerate}
+$endif$
+
+% 5. Угрозы
+\section{Актуальные угрозы}
+\label{sec:threats}
+
+$if(threats)$
+$threats$
+$else$
+\subsection{Угрозы конфиденциальности}
+\begin{itemize}
+    \item Несанкционированный доступ к данным;
+    \item Перехват информации в каналах связи;
+    \item Утечка через инсайдеров.
+\end{itemize}
+
+\subsection{Угрозы целостности}
+\begin{itemize}
+    \item Модификация данных;
+    \item Уничтожение информации;
+    \item Внедрение вредоносного кода.
+\end{itemize}
+
+\subsection{Угрозы доступности}
+\begin{itemize}
+    \item DDoS-атаки;
+    \item Отказ оборудования;
+    \item Блокировка систем.
+\end{itemize}
+$endif$
+
+% 6. Каналы утечки
+\section{Каналы утечки информации}
+\label{sec:channels}
+
+$if(channels)$
+$channels$
+$endif$
+
+% 7. Оценка рисков
+\section{Оценка рисков}
+\label{sec:risk_assessment}
+
+$if(risk_assessment)$
+$risk_assessment$
+$endif$
+
+% 8. Меры защиты
+\section{Меры по нейтрализации угроз}
+\label{sec:countermeasures}
+
+$if(countermeasures)$
+$countermeasures$
+$else$
+\subsection{Организационные меры}
+\begin{itemize}
+    \item Разработка политик безопасности;
+    \item Обучение персонала;
+    \item Контроль доступа.
+\end{itemize}
+
+\subsection{Технические меры}
+\begin{itemize}
+    \item Межсетевое экранирование;
+    \item Антивирусная защита;
+    \item Шифрование данных;
+    \item Системы обнаружения вторжений.
+\end{itemize}
+$endif$
+
+% Приложения
+$if(applications)$
+\newpage
+\appendix
+\section*{Приложения}
+\addcontentsline{toc}{section}{Приложения}
+$applications$
+$endif$
+
+% Нормативные ссылки
+$if(standards)$
+\newpage
+\section*{Нормативные ссылки}
+\addcontentsline{toc}{section}{Нормативные ссылки}
+\begin{itemize}
+$for(standards)$\item $standards$$endfor$
+\end{itemize}
+$endif$
+
+\end{document}
