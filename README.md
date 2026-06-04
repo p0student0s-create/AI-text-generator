@@ -44,7 +44,7 @@
 | ---------------- | ----------------------- |
 | Backend          | Python 3.10+            |
 | RAG Framework    | LightRAG                |
-| LLM              | Qwen2.5-14B-Instruct    |
+| LLM              | Qwen2.5-14B, Gemma4     |
 | LLM Runtime      | Ollama                  |
 | Graph Database   | Neo4j                   |
 | Vector Database  | Milvus                  |
