@@ -1,3 +1,4 @@
+// frontend/src/services/api.ts
 import type {
   WizardFormData,
   GenerationResult,
@@ -9,7 +10,6 @@ import type {
 
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8000';
 const API_TIMEOUT_MS = 3600_000;
-const USE_MOCK_API = false;
 
 function uid(): string {
   return Math.random().toString(36).slice(2, 10);
@@ -37,49 +37,162 @@ function mapDocumentTypeToBackend(type: DocumentTypeId): string {
   return type;
 }
 
-function mapBackendResponseToFrontend(
-  backend: any,
-  form: WizardFormData
-): GenerationResult {
-  const sections: GeneratedSection[] = (backend.sections || []).map((s: any) => ({
-    id: uid(),
-    title: s.title || s.section_number || 'Раздел',
-    content: s.content || '',
-    wordCount: s.word_count || s.content?.split(/\s+/).length || 0,
-  }));
+// === SSE Event Types ===
+export interface StreamEvent {
+  type: string;
+  [key: string]: any;
+}
 
-  const sources: Source[] = (backend.normative_links || []).map((ref: string) => ({
-    id: uid(),
-    standard: ref,
-    clause: '',
-    text: `Требование из ${ref}`,
-  }));
+export type StreamEventHandler = (event: StreamEvent) => void;
 
-  if (sources.length === 0 && form.standards.length > 0) {
-    form.standards.forEach((std) => {
-      sources.push({
-        id: uid(),
-        standard: std,
-        clause: '',
-        text: `Требование стандарта ${std}`,
-      });
-    });
+/**
+ * Streaming генерация документа через SSE
+ */
+export async function generateDocumentStream(
+  form: WizardFormData,
+  onEvent: StreamEventHandler,
+  signal?: AbortSignal
+): Promise<GenerationResult> {
+  const requestBody = {
+    doc_type: mapDocumentTypeToBackend(form.documentType!),
+    standards: form.standards.map(mapStandardIdToBackend),
+    title: form.title || 'Документ',
+    organization: form.organizationName || 'Организация',
+    object_type: form.protectionObject || 'Информационная система',
+    data_category: form.dataCategory || 'Конфиденциальная информация',
+  };
+
+  const response = await fetch(`${API_BASE}/api/documents/generate-stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody),
+    signal,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
   }
 
-  const totalWords = sections.reduce((acc, s) => acc + s.wordCount, 0);
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error('No response body');
 
-  return {
-    id: backend.document_id || uid(),
-    documentType: form.documentType!,
-    title: backend.title || form.title || 'Документ',
-    sections,
-    sources,
-    standards: form.standards,
-    organizationName: form.organizationName,
-    generatedAt: new Date(),
-    wordCount: totalWords,
-    pageEstimate: Math.max(1, Math.ceil(totalWords / 300)),
-  };
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let generationId = '';
+  let sections: GeneratedSection[] = [];
+  let currentSection: GeneratedSection | null = null;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      if (line.startsWith('data: ')) {
+        const data = line.slice(6).trim();
+        if (!data) continue;
+        
+        try {
+          const event: StreamEvent = JSON.parse(data);
+          onEvent(event);
+
+          // Обработка событий
+          if (event.type === 'generation_id') {
+            generationId = event.generation_id;
+          } else if (event.type === 'section_start') {
+            currentSection = {
+              id: uid(),
+              title: `${event.section_number}. ${event.section_title}`,
+              content: '',
+              wordCount: 0,
+            };
+          } else if (event.type === 'text_chunk' && currentSection) {
+            currentSection.content += event.chunk;
+            currentSection.wordCount = currentSection.content.split(/\s+/).length;
+            // Обновляем последний раздел в массиве
+            const idx = sections.findIndex(s => s.id === currentSection!.id);
+            if (idx >= 0) {
+              sections[idx] = { ...currentSection };
+            } else {
+              sections.push({ ...currentSection });
+            }
+          } else if (event.type === 'section_complete' && currentSection) {
+            currentSection.wordCount = event.word_count || currentSection.wordCount;
+            const idx = sections.findIndex(s => s.id === currentSection!.id);
+            if (idx >= 0) {
+              sections[idx] = { ...currentSection };
+            }
+            currentSection = null;
+          } else if (event.type === 'completed') {
+            const result = event.result;
+            return {
+              id: result.document_id || uid(),
+              documentType: form.documentType!,
+              title: result.context?.title || form.title || 'Документ',
+              sections,
+              sources: [],
+              standards: form.standards,
+              organizationName: form.organizationName,
+              generatedAt: new Date(),
+              wordCount: sections.reduce((acc, s) => acc + s.wordCount, 0),
+              pageEstimate: Math.max(1, Math.ceil(sections.reduce((acc, s) => acc + s.wordCount, 0) / 300)),
+              document_id: result.document_id,
+              download_url: result.download_url,
+              file_path: result.file_path,
+              compliance_score: result.compliance?.score,
+            };
+          } else if (event.type === 'error') {
+            throw new Error(event.error || 'Ошибка генерации');
+          }
+        } catch (e) {
+          console.warn('Failed to parse SSE event:', data);
+        }
+      }
+    }
+  }
+
+  throw new Error('Stream ended without completion');
+}
+
+/**
+ * Отправка дополнительного промпта во время генерации
+ */
+export async function sendAdditionalPrompt(
+  generationId: string,
+  prompt: string
+): Promise<void> {
+  const response = await fetch(`${API_BASE}/api/documents/prompt`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      generation_id: generationId,
+      prompt,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || 'Не удалось отправить промпт');
+  }
+}
+
+/**
+ * Отмена генерации
+ */
+export async function cancelGeneration(generationId: string): Promise<void> {
+  const response = await fetch(`${API_BASE}/api/documents/cancel`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ generation_id: generationId }),
+  });
+
+  if (!response.ok) {
+    throw new Error('Не удалось отменить генерацию');
+  }
 }
 
 export async function downloadGeneratedDocument(
@@ -88,15 +201,15 @@ export async function downloadGeneratedDocument(
   format: 'docx' | 'pdf' = 'docx'
 ): Promise<void> {
   try {
-    const fullUrl = downloadUrl.startsWith('http') 
+    const fullUrl = downloadUrl.startsWith('http')
       ? `${downloadUrl}${downloadUrl.includes('?') ? '&' : '?'}format=${format}`
       : `${API_BASE}${downloadUrl}?format=${format}`;
-
+    
     const response = await fetch(fullUrl, {
       method: 'GET',
       headers: {
-        'Accept': format === 'pdf' 
-          ? 'application/pdf' 
+        'Accept': format === 'pdf'
+          ? 'application/pdf'
           : 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
       }
     });
@@ -108,15 +221,12 @@ export async function downloadGeneratedDocument(
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
-    
     a.href = url;
     a.download = filename || `document_${Date.now()}.${format}`;
     document.body.appendChild(a);
     a.click();
-    
     window.URL.revokeObjectURL(url);
     document.body.removeChild(a);
-    
   } catch (error) {
     console.error('Ошибка при скачивании документа:', error);
     throw error;
@@ -125,55 +235,17 @@ export async function downloadGeneratedDocument(
 
 export const api = {
   async generateDocument(form: WizardFormData, outputFormat: 'docx' | 'pdf' = 'docx'): Promise<GenerationResult> {
-
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
-
-    try {
-      const requestBody = {
-        doc_type: mapDocumentTypeToBackend(form.documentType!),
-        standards: form.standards.map(mapStandardIdToBackend),
-        title: form.title || 'Документ',
-        organization: form.organizationName || 'Организация',
-        object_type: form.protectionObject || 'Информационная система',
-        data_category: form.dataCategory || 'Конфиденциальная информация',
-        output_format: outputFormat,
-      };
-
-      const response = await fetch(`${API_BASE}/api/documents/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeout);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.detail || `HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const backendResult = await response.json();
-      return mapBackendResponseToFrontend(backendResult, form);
-
-    } catch (error) {
-      clearTimeout(timeout);
-      
-      if (error instanceof DOMException && error.name === 'AbortError') {
-        throw new Error('Таймаут генерации. Документ слишком сложный или сервер перегружен.');
-      }
-      
-      if (error instanceof Error) {
-        throw error;
-      }
-      
-      throw new Error('Неизвестная ошибка при генерации документа.');
-    }
+    // Legacy method — используем streaming internally
+    let finalResult: GenerationResult | null = null;
+    await generateDocumentStream(form, () => {}, undefined);
+    return finalResult!;
   },
 
-  async downloadDocument(documentId: string, filename?: string, format: 'docx' | 'pdf' = 'docx'): Promise<void> {
+  generateDocumentStream,
+  sendAdditionalPrompt,
+  cancelGeneration,
 
+  async downloadDocument(documentId: string, filename?: string, format: 'docx' | 'pdf' = 'docx'): Promise<void> {
     await downloadGeneratedDocument(
       `/api/documents/${documentId}/download`,
       filename || `${documentId}.${format}`,
@@ -181,26 +253,14 @@ export const api = {
     );
   },
 
-  async getAvailableStandards(): Promise<Array<{
-    id: StandardId;
-    name: string;
-    description: string;
-    available: boolean;
-  }>> {
-
+  async getAvailableStandards(): Promise<Array<{ id: StandardId; name: string; description: string; available: boolean }>> {
     try {
       const response = await fetch(`${API_BASE}/api/standards`, {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
       });
-
-      if (!response.ok) {
-        console.warn('Не удалось загрузить стандарты с бэкенда, используем заглушку');
-        return [];
-      }
-
+      if (!response.ok) return [];
       const data: any[] = await response.json();
-      
       return data.map((item: any) => ({
         id: item.id.toUpperCase().replace(/[^A-Z0-9]/g, '') as StandardId,
         name: item.name,
@@ -219,15 +279,9 @@ export const api = {
         method: 'GET',
         headers: { 'Accept': 'application/json' },
       });
-      
       if (!response.ok) return { ok: false, services: {} };
-      
       const data: any = await response.json();
-      
-      return {
-        ok: data.status === 'healthy',
-        services: data.services || {},
-      };
+      return { ok: data.status === 'healthy', services: data.services || {} };
     } catch (error) {
       console.error('Ошибка health check:', error);
       return { ok: false, services: {} };

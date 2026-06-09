@@ -1,18 +1,8 @@
 export type PageId = 'dashboard' | 'generator' | 'history' | 'settings' | 'actualize';
 
 export type StandardId =
-  | 'FZ152'
-  | 'FZ187'
-  | 'FSTEC239'
-  | 'FSTEC17'
-  | 'FSTEC21'
-  | 'FSTEC_MD'
-  | 'GOST57580'
-  | 'ISO27001'
-  | 'NIST'
-  | 'GDPR'
-  | 'PCI-DSS'
-  | 'CIS';
+  | 'FZ152' | 'FZ187' | 'FSTEC239' | 'FSTEC17' | 'FSTEC21' | 'FSTEC_MD'
+  | 'GOST57580' | 'ISO27001' | 'NIST' | 'GDPR' | 'PCI-DSS' | 'CIS';
 
 export interface SecurityStandard {
   id: StandardId;
@@ -20,26 +10,9 @@ export interface SecurityStandard {
   description: string;
 }
 
-export interface HistoryEntry {
-  id: string;
-  title: string;
-  documentType: DocumentTypeId;
-  standards: StandardId[];
-  organizationName: string;
-  generatedAt: Date;
-  wordCount: number;
-  status: 'completed' | 'error';
-  formSnapshot?: Partial<WizardFormData>;
-}
-
 export type DocumentTypeId =
-  | 'policy'
-  | 'regulation'
-  | 'instruction'
-  | 'threat_model'
-  | 'risk_assessment'
-  | 'incident_response'
-  | 'access_control';
+  | 'policy' | 'regulation' | 'instruction' | 'threat_model'
+  | 'risk_assessment' | 'incident_response' | 'access_control';
 
 export interface DocumentType {
   id: DocumentTypeId;
@@ -101,6 +74,7 @@ export interface GenerationResult {
   compliance_score?: number;
 }
 
+// Убедитесь, что HistoryEntry определён ОДИН РАЗ
 export interface HistoryEntry {
   id: string;
   title: string;
@@ -143,4 +117,24 @@ export interface AppSettings {
   language: 'ru' | 'en';
   autoActualize: boolean;
   autoActualizePeriod: AutoActualizePeriod;
+}
+
+// === Streaming types ===
+export type GenerationStatus = 'idle' | 'generating' | 'success' | 'error';
+
+export interface StreamEvent {
+  type: string;
+  [key: string]: any;
+}
+
+export interface StreamingState {
+  generationId: string | null;
+  currentStage: string;
+  currentSection: string | null;
+  currentSectionIndex: number;
+  totalSections: number;
+  progress: number;
+  sections: GeneratedSection[];
+  additionalPrompts: string[];
+  error: string | null;
 }

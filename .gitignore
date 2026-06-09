@@ -1,25 +1,69 @@
-# Виртуальное окружение
-.venv/
-venv/
+# === Node.js ===
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Кэш Python
+# === Сборка фронтенда ===
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# === Python ===
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
 
-# Файлы с секретами
+# === Переменные окружения ===
 .env
-.env.bak
+.env.local
+.env.*.local
 
-# Логи
-*.log
-logs/
-
-# IDE
+# === IDE ===
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 
-# Временные файлы
-*.tmp
+# === OS ===
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# === Данные и векторные хранилища ===
+data/
+chroma/
+*.chroma
+neo4j_data/
+milvus_data/
+redis_data/
+
+# === Логи ===
+logs/
+*.log
+
+# === Сгенерированные документы (временные) ===
+storage/generated/
+storage/test_output/
+storage/vkr_output/
+
+# === Кэш ===
+.cache/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+
+# === Старые backup-файлы ===
+*-OLD.py
 *.bak
+*.backup
