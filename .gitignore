@@ -62,6 +62,7 @@ storage/vkr_output/
 .mypy_cache/
 .pytest_cache/
 .ruff_cache/
+frontend/node_modules/.vite/
 
 # === Старые backup-файлы ===
 *-OLD.py
